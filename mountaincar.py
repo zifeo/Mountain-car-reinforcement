@@ -249,7 +249,7 @@ class MountainCarViewer():
         X = np.linspace(-160, 160, 61)
         XD = np.linspace(-20, 20, 51)
         X,XD = np.meshgrid(X , XD)
-
+        print(X)
         # calculate the energy in each point of the grid
         E = self.mountain_car._energy(X, XD)
 
