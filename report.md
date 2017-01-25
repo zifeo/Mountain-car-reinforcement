@@ -8,34 +8,63 @@ Nicolas Casademont, Teo Stocco
 
 Using reward-based learning, this project shows how a car agent can learn to climb a steep hill by accelerating forwards and backwards at appropriate times. It analyses methods for hyperparameter tuning and visualize progresses across various plots.
 
+## Gridsearch
+
+We used a general grid search across following parameters. Both $0$ and $1$ have been tried as initialization for weights. Many $\lambda$'s and $\tau$'s have been tested to find a well behaving combinaison: $\lambda=0.05$, $\tau=0.1$ and intialization with $0$. In the following and except for the escape latency, all plots are the average of 8 agents running in parallel with corresponding variances (grey area). The red line represente the average iteration of last 60 episodes.
+
 ## Escape latency
 
-One episode starts with the knowledge of past q-values, another initial states and resetted eligibility traces. It contains many iterations or trials that modify the state until it eventually converges. 
+The following shows the learning curve of 20 agents (light blue traces) and the average (dark blue) of those runs with its variance (grey area). The time to solve this task is highly varying at the beginning but as more and more agents are learning it is going down. Although almost all agents are converging from episode 20, some particular one still need longer to terminate. This can be caused either by some bad luck at drawing the initial state or the agent not having enough knownledge on rare or complex path to take.
 
-> Simulate at least 10 agents learning the task, and plot the escape latency (time to solve the task), averaged across agents, as a function of trial number (i.e., the learning curve). How long does it take the agent to learn the task?
-
-![](./figures/visualization-already-given.png)
-![](./figures/.png)
+![](./figures/20agents.jpg)
 
 ## Q-values visualization
 
-> Visualize the behavior of the agent (the policy) by plotting a vector field (0-length vector for the neutral action) given by the direction with the highest Q-value as a function of each possible state (x,x ̇). Plot examples after different number of trials and comment what you see.
+The behavior of the agent is quickly evolving at it converges. On the first plot (10th episode), the agent has already learnt some kind of strategy (i.d. no naive forward action on every state, instead some element of balancing) but it is not perfect as some close states are contradictive. One could expect to see some area leading to a better balancing for achieving the task. This is exactly what the next plots are showing (25th, 50th and 100th episodes). The agent learns a global strategy for balacing upon some states where only going forward leads to the goal. The "empty" area describes the states where an optimal is rarely going through and it thus not optimize to use them.
 
-![](./figures/.png)
+![](./figures/epi10.jpg)
+![](./figures/epi25.jpg)
+![](./figures/epi50.jpg)
+![](./figures/epi100.jpg)
+
+Left arrow represents backward action, right arrow forward action and dots no acceleration. The four vector fields are plot in order at different episode: 10, 25, 50 and 100.
 
 ## Temperature
 
-> Investigatetheexplorationtemperatureparameterτ,comparingthelearningcurves. Try fixed values such as, τ = 1, τ = ∞, τ = 0, and time decaying functions. Explain its relation to exploration and exploitation.
+The temperature parameter affects the exploration versus exploitation behaviour. When learning the agent should explore all states to be able correctly estimate corresponding q-values. When performing the agent already knows the optimal strategy according to its experience and therefore should not do any tries and only follows the best action. This can be controlled using the temperature parameters. A null temperature will consider only best action, a $0.1$ temperature will choose very often the best one (as in first plot $\tau=0.1$) while a big temperature will choose an action at random (as in third plot $\tau=10$). Therefore a low temperature is good for exploitation and a high temperature good for exploration. One can vary it from high to low and thus have a mixed agent that learns first and perform seconds (as in fourth plot, it also converges faster).
 
-![](./figures/.png)
+![](./figures/f0-l0.25-t0.1.jpg)
+![](./figures/f0-l0.25-t1.jpg)
+![](./figures/f0-l0.25-t10.jpg)
+![](./figures/f0-l0.25-tm.jpg)
+
+These learning curves demonstrate the different values of tau. In order we have $\tau=0.1$, $\tau=1$, $\tau=10$ and tau decaying from $1$ to $0.1$.
+
+![](./figures/softmax.jpg)
+![](./figures/taum.jpg)
+
+The first plot shows how tau impacts q-values of $\{0.3, 0.2, 0.1\}$ against the probability of drawing the related action. The second shows the tau decay we used from $1$ to $0.1$.
 
 ## Learning curve and eligibility traces
 
-> Compare the learning curves for different values of the eligibity trace decay rate, e.g., λ = 0.95 and λ = 0. What is the role of the eligibility trace?
+The eligibility trace helps to converge faster by memorizing and updating all previous states when reaching the goal. By setting $\lambda=0$, we can see that the converge is slower when not updating previous states. Having a too good memories can also be penalizing as bad episode impact negatively lots of q-values. Thus we found that having a trace decay rate of $\lambda=0.05$ was the best fit.
+
+![](./figures/f0-l0-t0.1.jpg)
+![](./figures/f0-l0.05-t0.1.jpg)
+![](./figures/f0-l0.95-t0.1.jpg)
+
+The plots shows no eligibility trace, an eligibility trace of $\lambda=0.05$ and $\lambda=0.95$.
 
 ## Initialization
 
-> Try different initialization of the weights waj = 0 and waj = 1 What is the effect on the learning curves? Explain why.
+We expected the initialization of the weights to be the best with some nonzero random jitter but it turned out to be better to start with null weights and let the learning updating necessary ones. One could explain this by assuming that fully connected neural networks (all weights initialized to $1$'s) might require more episode to converge because it requires time to shape correctly those values. Having no connection at start allows the net to only take into account the required ones.
+
+![](./figures/f0-l0.05-t0.1.jpg)
+![](./figures/f0-l0.25-t0.1.jpg)
+![](./figures/f1-l0.05-t0.1.jpg)
+![](./figures/f1-l0.25-t0.1.jpg)
+
+The first two plots start both with $0$ (respectively $\lambda=\{0.05,0.25\}$) while the last used $1$ as initilization (respectively $\lambda=\{0.05,0.25\}$).
 
 ## Conclusion
 
