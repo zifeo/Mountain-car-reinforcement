@@ -10,7 +10,7 @@ Using reward-based learning, this project shows how a car agent can learn to cli
 
 ## Gridsearch
 
-We used a general grid search across the following parameters. Both $0$ and $1$ have been tried as initialization for weights. Many $\lambda$'s and $\tau$'s have been tested to find a well behaving combinaison: $\lambda=0.05$, $\tau=0.1$ and intialization with $0$. In the following and except for the escape latency, all plots are the average of 8 agents running in parallel with corresponding variances (grey area). The orange line represente the average iteration over the last 60 episodes.
+We used a general grid search algorithm across the following parameters. Both $0$ and $1$ have been tried as initialization for weights. Many $\lambda$'s and $\tau$'s have been tested to find a well behaving combinaison: $\lambda=0.05$, $\tau=0.1$ and intialization with $0$. In the following and except for the escape latency, all plots are the average of 8 agents running in parallel with corresponding variances (grey area). The orange line represents the average iteration over the last 60 episodes.
 
 ## Escape latency
 
@@ -20,7 +20,7 @@ The following shows the learning curve of 20 agents (light blue traces) and the 
 
 ## Q-values visualization
 
-The behavior of the agent is quickly evolving as the learning algorithm converges. On the first plot (10th episode), the agent has already learnt some kind of strategy (i.d. no naive forward action on every state as it was at first, instead some element of balancing) but it is not perfect as some close states are contradictive. One could expect to see some areas leading to a better balancing for achieving the task. This is exactly what the next plots are showing (25th, 50th and 100th episodes). The agent learns a global strategy for balacing upon some states where only going forward leads to the goal. The "empty" areas describe the states where an optimum is rarely going through and it is thus not optimum to use them.
+The behavior of the agent is quickly evolving as the learning algorithm converges. On the first plot (10th episode), the agent has already learnt some kind of strategy (i.d. no naive forward action on every state as it was at first, instead some element of balancing) but it is not perfect as some close states are contradictive. One could expect to see some areas leading to a better balancing for achieving the task. This is exactly what the next plots are showing (25th, 50th and 100th episodes). The agent learns a global strategy for balacing upon some states where only going forwards leads to the goal. The "empty" areas describe the states where the agent is rarely going through and thus not well trained.
 
 ![](./figures/epi10.png)
 ![](./figures/epi25.png)
@@ -31,7 +31,7 @@ Left arrow represents backward action, right arrow forward action and dots no ac
 
 ## Temperature
 
-The temperature parameter affects the exploration versus exploitation behaviour. When learning the agent should first explore all states to be able to correctly estimate the corresponding q-values. While learning the agent already knows the optimal strategy according to its experience and therefore should not do any tries and only follow the best action. This can be controlled using the temperature parameter. A null temperature will consider only best action, a $0.1$ temperature will choose very often the best one (as in the first plot $\tau=0.1$) while a higher temperature will choose an action at random (as in the third plot $\tau=10$). Therefore a low temperature is good for exploitation and a high temperature good for exploration. One can vary it from high to low and thus have a mixed agent that learns first and perform seconds (as in fourth plot, it also converges faster).
+The temperature parameter affects the exploration versus exploitation behaviour. When learning the agent should first explore all states to be able to correctly estimate the corresponding q-values. After learning the agent already knows the optimal strategy according to its experience and therefore should not do any tries and only follow the best action. This can be controlled using the temperature parameter. A null temperature will consider only best action, a $0.1$ temperature will choose very often the best one (as in the first plot $\tau=0.1$) while a higher temperature will choose an action at random (as in the third plot $\tau=10$). Therefore a low temperature is good for exploitation and a high temperature good for exploration. One can vary it from high to low and thus have a mixed agent that learns first and perform seconds (as in fourth plot, it also converges faster).
 
 ![](./figures/f0-l0.25-t0.1.jpg)
 ![](./figures/f0-l0.25-t1.jpg)
@@ -57,7 +57,7 @@ The plots shows no eligibility trace, an eligibility trace of $\lambda=0$, $\lam
 
 ## Initialization
 
-We expected the initialization of the weights to be the best with some nonzero random jitter but it turned out to be better to start with null weights and let the learning updating necessary ones. One could explain this by assuming that fully connected neural networks (all weights initialized to $1$'s) might require more episode to converge because it requires time to shape correctly those values. Having no connection at start allows the net to only take into account the required ones.
+We expected the initialization of the weights to be the best with some nonzero random jitter but it turned out to be better to start with null weights and let the learning updating necessary ones. One could explain this by assuming that fully connected neural networks (all weights initialized to $1$'s) might require more episode to converge (it requires time to shape correctly those values). Having no connection at start allows the net to only take into account the required ones.
 
 ![](./figures/f0-l0.05-t0.1.jpg)
 ![](./figures/f0-l0.25-t0.1.jpg)
@@ -68,5 +68,4 @@ The first two plots start both with $0$ (respectively $\lambda=\{0.05,0.25\}$) w
 
 ## Conclusion
 
-Our algorithm learned the task and we could easily see the differences with the different parameters we've chosen. At first we had diffictulties seing fast convergence but by adding a penalizing term we obtained the result we have now. 
-
+Comparing all parameters combinaisons evaluated by the grid search algorithm allowed us to better see how each one impacted the learning. Even though at first we had issues obtaining a fast convergence, adding a penalizing term to the q-values error delta solved that issue. It enhances the agent by prioritizing the shorter runs over longer (thus worst) ones ending up in a globally better and more precise learning.
