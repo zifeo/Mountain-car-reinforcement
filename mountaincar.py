@@ -1,7 +1,3 @@
-"""Mountain-car problem simulation library for the reinforcement learning
-miniproject.
-"""
-
 import pylab as plb
 import numpy as np
 
